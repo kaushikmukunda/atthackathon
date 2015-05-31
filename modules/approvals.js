@@ -54,10 +54,11 @@ function getProjectIds (swLat, swLong, neLat, neLong, type) {
         var approvals = [];
         result.body.forEach(function(approval) {
           var approvalType = approval['ApprovalType'].toLowerCase();
+          var approvalScope = 'ApprovalScope' in approval? approval['ApprovalScope'].toLowerCase() : '';
 
           // Ignore approval requests not in final stage and not of required type
           if (approval['ApprovalStatus'] == 'Issued' &&
-              approvalType.indexOf(type) != -1) {
+              approvalScope.indexOf(type) != -1) {
             approvals.push(approval['ProjectId']);
           }
         });
@@ -89,10 +90,9 @@ function sortByScore(firms) {
 exports.getContractors = function(swLat, swLong, neLat, neLong) {
   return new Promise(function (resolve, reject) {
     // Todo: Parameterize type
-    getProjectIds(swLat, swLong, neLat, neLong, 'mechanical')
+    getProjectIds(swLat, swLong, neLat, neLong, 'bathroom')
     .then(function(projects) {
       var data = {};
-      console.log(projects);
       projects.forEach(function(projectId) {
         getProjectDetails(projectId)
         .then(function(details) {
