@@ -3,23 +3,35 @@
 var http = require('http');
 var Promise = require('bluebird');
 var rest = require('unirest');
+var socket = require('./socket');
 
 var exports = module.exports = {};
+
+function dictToArr(dict) {
+  var result = [];
+  for (var item in dict) {
+    result.push(dict[item]);
+  }
+  return result;
+}
 
 function getUniqueCustomers(customers) {
   var unique = {};
   customers.forEach(function(customer) {
     // ignore invidividual customers
-    var firmName = customer['FirmName'];
+    var firmName = customer['FirmName'].toLowerCase();
+    var name = customer['Name'].toLowerCase();
     if (firmName === '') {
       return;
     }
-    unique[customer['CustomerId']] = {
-      'firmName' : firmName,
-      'Name' : customer['Name']
-    };
+
+    if (!unique[firmName]) {
+      unique[firmName] = {'score': 0, 'firmName': firmName};
+    }
+    unique[firmName]['score']++;
   });
-  return unique;
+
+  return dictToArr(unique);
 }
 
 function getProjectDetails(projectId) {
@@ -27,9 +39,7 @@ function getProjectDetails(projectId) {
     rest.get('http://edison.sannet.gov/opendsd/api/Project/' + projectId)
     .header('Accept', 'application/json')
     .end(function(result) {
-      var customers = getUniqueCustomers(result.body['Customers']);
-      console.log(customers);
-      resolve(customers);
+      resolve(getUniqueCustomers(result.body['Customers']));
     });
   });
 }
@@ -56,16 +66,43 @@ function getProjectIds (swLat, swLong, neLat, neLong, type) {
   });
 };
 
+function mergeCustomers(base, add) {
+  add.forEach(function(newFirm) {
+    console.log('newfirm', newFirm);
+    var firmName = newFirm['firmName'];
+    if (!base[firmName]) {
+      base[firmName] = newFirm;
+    } else {
+      base[firmName]['score'] += newFirm['score'];
+    }
+  });
+  return base;
+}
+
+function sortByScore(firms) {
+  firms.sort(function(firmA, firmB) {
+    return firmB['score'] - firmA['score'];
+  });
+  return firms;
+}
+
 exports.getContractors = function(swLat, swLong, neLat, neLong) {
   return new Promise(function (resolve, reject) {
     // Todo: Parameterize type
-    getProjectIds(swLat, swLong, neLat, neLong, 'electrical')
+    getProjectIds(swLat, swLong, neLat, neLong, 'mechanical')
     .then(function(projects) {
-      console.log('projects', projects);
+      var data = {};
+      console.log(projects);
       projects.forEach(function(projectId) {
-        getProjectDetails(projectId);
+        getProjectDetails(projectId)
+        .then(function(details) {
+          data = mergeCustomers(data, details);
+          var ranked = sortByScore(dictToArr(data));
+          console.log(ranked.slice(0, 10));
+          socket.broadcast('updateCustomer', ranked.slice(0, 10));
+        });
       });
-      resolve(JSON.stringify(projects));
+    resolve();
     });
   });
 };
