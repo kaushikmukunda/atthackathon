@@ -87,12 +87,12 @@ function sortByScore(firms) {
   return firms;
 }
 
-exports.getContractors = function(swLat, swLong, neLat, neLong) {
+exports.getContractors = function(swLat, swLong, neLat, neLong, type) {
   return new Promise(function (resolve, reject) {
-    // Todo: Parameterize type
-    getProjectIds(swLat, swLong, neLat, neLong, 'bathroom')
+    getProjectIds(swLat, swLong, neLat, neLong, type)
     .then(function(projects) {
       var data = {};
+      console.log('projects', projects);
       projects.forEach(function(projectId) {
         getProjectDetails(projectId)
         .then(function(details) {

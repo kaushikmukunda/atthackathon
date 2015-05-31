@@ -6,10 +6,7 @@ var approvals = require('../modules/approvals');
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', {'content' : "Hello"});
-  /*.then(function(json) {
-    res.render('index', {'content' : json});
-  });*/
+  res.render('index');
 });
 
 module.exports = router;
