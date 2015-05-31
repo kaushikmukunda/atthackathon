@@ -32,7 +32,23 @@ $(document).ready(function() {
   var socket = io();
   var keyInput = $('#key')[0];
 
+  var rTable = $('#table').dataTable ({
+    "data": [],
+    "searching": false,
+    "paging": false,
+    "columns" : [
+      {'title': "Firm Name"},
+      {'title': "Score"}
+    ]
+  });
+
   socket.on('updateCustomer', function(data) {
     console.log(data);
+    var dataSet= [];
+    data.forEach(function(row) {
+      dataSet.push([row['firmName'], row['score']]);
+    });
+    rTable.fnClearTable();
+    rTable.fnAddData(dataSet);
   });
 });

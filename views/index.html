@@ -6,7 +6,9 @@
   <script type="text/javascript" src="js/index.js"></script>
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
   <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.css"></style>
   <link rel="stylesheet" href="css/bootstrap.min.css"></style>
   <link rel="stylesheet" href="css/index.css"></style>
 
@@ -25,5 +27,9 @@
     <div id="googleMap" style="width:540px;height:400px;"></div>
     <input id="key" type="text" class="col-sm-9 col-md-7 bg-yellow" placeholder="kitchen"></input><br>
     <button class="btn btn-default col-md-7 col-sm-9 bg-yellow" id="search">See Results</button>
+  </div>
+  <br>
+  <div class="container">
+    <table id="table"></table>
   </div>
 {% endblock %}
