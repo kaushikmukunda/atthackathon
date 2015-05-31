@@ -66,7 +66,16 @@ function getProjectIds (swLat, swLong, neLat, neLong, type) {
     .header('Accept', 'application/json')
     .end(function(result) {
         var projects = [];
+
+        if ('ErrorMessage' in result.body){
+          console.log("No entries found");
+          socket.broadcast('updateCustomer', []);
+          resolve([]);
+          return;
+        }
+
         console.log("Number of approvals", result.body.length);
+        console.log(result.body);
         result.body.forEach(function(approval) {
           var approvalType = approval['ApprovalType'].toLowerCase();
           var approvalScope = 'ApprovalScope' in approval? approval['ApprovalScope'].toLowerCase() : '';
