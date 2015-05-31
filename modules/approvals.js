@@ -75,7 +75,6 @@ function getProjectIds (swLat, swLong, neLat, neLong, type) {
         }
 
         console.log("Number of approvals", result.body.length);
-        console.log(result.body);
         result.body.forEach(function(approval) {
           var approvalType = approval['ApprovalType'].toLowerCase();
           var approvalScope = 'ApprovalScope' in approval? approval['ApprovalScope'].toLowerCase() : '';
