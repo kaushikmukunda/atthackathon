@@ -7,5 +7,6 @@ var exports = module.exports = {};
 
 exports.getApprovals = function () {
   return new Promise(function (resolve, reject) {
+    resolve('promise');
   });
 };

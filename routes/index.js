@@ -8,7 +8,7 @@ var approvals = require('../modules/approvals');
 router.get('/', function(req, res) {
   approvals.getApprovals()
   .then(function(json) {
-    res.render('index.html', {'content' : json});
+    res.render('index', {'content' : json});
   });
 });
 
