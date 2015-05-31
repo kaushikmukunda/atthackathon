@@ -15,13 +15,26 @@ function dictToArr(dict) {
   return result;
 }
 
+function getUnique(arr) {
+   var u = {}, a = [];
+   for(var i = 0, l = arr.length; i < l; ++i){
+      if(u.hasOwnProperty(arr[i])) {
+         continue;
+      }
+      a.push(arr[i]);
+      u[arr[i]] = 1;
+   }
+   return a;
+}
+
 function getUniqueCustomers(customers) {
   var unique = {};
   customers.forEach(function(customer) {
     // ignore invidividual customers
     var firmName = customer['FirmName'].toLowerCase();
     var name = customer['Name'].toLowerCase();
-    if (firmName === '') {
+    if (firmName === '' ||
+        firmName.indexOf('permit') != -1) {
       return;
     }
 
@@ -45,13 +58,15 @@ function getProjectDetails(projectId) {
 }
 
 function getProjectIds (swLat, swLong, neLat, neLong, type) {
+  console.log("Querying DSD");
   return new Promise(function (resolve, reject) {
     rest.get('http://opendsd.sandiego.gov/api/approvalmapsearch/?SearchType=Ministerial&SouthWestLatitude='
     + swLat +'&SouthWestLongitude=' + swLong
     +'&NorthEastLatitude=' + neLat + '&NorthEastLongitude=' + neLong)
     .header('Accept', 'application/json')
     .end(function(result) {
-        var approvals = [];
+        var projects = [];
+        console.log("Number of approvals", result.body.length);
         result.body.forEach(function(approval) {
           var approvalType = approval['ApprovalType'].toLowerCase();
           var approvalScope = 'ApprovalScope' in approval? approval['ApprovalScope'].toLowerCase() : '';
@@ -59,10 +74,12 @@ function getProjectIds (swLat, swLong, neLat, neLong, type) {
           // Ignore approval requests not in final stage and not of required type
           if (approval['ApprovalStatus'] == 'Issued' &&
               approvalScope.indexOf(type) != -1) {
-            approvals.push(approval['ProjectId']);
+            projects.push(approval['ProjectId']);
           }
         });
-        resolve(approvals);
+        var s = getUnique(projects);
+        console.log("Number of unique projects", s.length);
+        resolve(s);
     });
   });
 };

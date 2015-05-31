@@ -43,7 +43,6 @@ $(document).ready(function() {
   });
 
   socket.on('updateCustomer', function(data) {
-    console.log(data);
     var dataSet= [];
     data.forEach(function(row) {
       dataSet.push([row['firmName'], row['score']]);
