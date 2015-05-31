@@ -9,9 +9,16 @@ var connection = {};
 function Endpoint(endpoint) {
   var client = endpoint;
 
-  client.on('readyToUpdate', function() {
+  client.on('fetchContractors', function(data) {
     var approvals = require('./approvals');
-    var json = approvals.getContractors(32.73617294543789,-117.15117940216066, 32.761366541185964,-117.11126813201906);
+    console.log(data);
+    approvals.getContractors(
+      data['swLat'],
+      data['swLng'],
+      data['neLat'],
+      data['neLng'],
+      data['type']
+      );
   });
 }
 
