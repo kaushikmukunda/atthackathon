@@ -24,6 +24,7 @@ $(document).ready(function() {
       'type': keyInput.value
     };
 
+    rTable.fnClearTable();
     socket.emit('fetchContractors', data);
 
   });
