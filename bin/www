@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 var debug = require('debug')('atthackathon');
 var app = require('../app');
+var socket = require('../modules/socket');
 
 app.set('port', process.env.PORT || 3000);
 
 var server = app.listen(app.get('port'), function() {
   debug('Express server listening on port ' + server.address().port);
+  socket.create(server);
 });
