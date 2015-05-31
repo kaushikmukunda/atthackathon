@@ -18,18 +18,19 @@
 {% block content %}
   <div class="container">
     <div class="navbar navbar-default navbar-fixed-top bg-yellow">
-      <img style="text-align:center; max-height:5%; max-width:5%" src="img/APPicon.png"></img>
+      <img style="text-align:center; max-height:3%; max-width:3%" src="img/APPicon.png"></img>
       <span class="title">ONESTO</span>
     </div>
   </div>
 
-  <div class="container">
+  <div class="col-md-6">
     <div id="googleMap" style="width:540px;height:400px;"></div>
-    <input id="key" type="text" class="col-sm-9 col-md-7 bg-yellow" placeholder="kitchen"></input><br>
-    <button class="btn btn-default col-md-7 col-sm-9 bg-yellow" id="search">See Results</button>
+    <input id="key" type="text" class="bg-yellow col-md-10 col-lg-7" placeholder="kitchen"></input><br>
+    <button class="btn btn-default bg-yellow col-md-10 col-lg-7" id="search">See Results</button>
   </div>
+
+    <div class="col-md-6">
+      <table id="table"></table>
+    </div>
   <br>
-  <div class="container">
-    <table id="table"></table>
-  </div>
 {% endblock %}

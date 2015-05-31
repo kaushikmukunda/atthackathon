@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodejs ./bin/www"
+    "start": "PORT=80 nodejs ./bin/www"
   },
   "dependencies": {
     "bluebird": "^2.9.27",
