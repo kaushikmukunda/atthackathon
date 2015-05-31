@@ -112,6 +112,24 @@ function sortByScore(firms) {
   return firms;
 }
 
+function scaleScores(scores) {
+  var max = 0;
+  var result = [];
+  scores.forEach(function(score) {
+    if (max < score['score']) {
+      max = score['score'];
+    }
+  });
+  console.log('max', max);
+  scores.forEach(function(score) {
+    var res = {};
+    res['score'] = Math.floor(score['score']/max * 100);
+    res['firmName'] = score['firmName'];
+    result.push(res);
+  });
+  return result;
+}
+
 exports.getContractors = function(swLat, swLong, neLat, neLong, type) {
   return new Promise(function (resolve, reject) {
     getProjectIds(swLat, swLong, neLat, neLong, type)
@@ -122,9 +140,10 @@ exports.getContractors = function(swLat, swLong, neLat, neLong, type) {
         getProjectDetails(projectId)
         .then(function(details) {
           data = mergeCustomers(data, details);
-          var ranked = sortByScore(dictToArr(data));
-          console.log(ranked.slice(0, 10));
-          socket.broadcast('updateCustomer', ranked.slice(0, 10));
+          var ranked = sortByScore(dictToArr(data)).slice(0, 10);
+          var scaled = scaleScores(ranked);
+          console.log(scaled);
+          socket.broadcast('updateCustomer', scaled);
         });
       });
     resolve();
