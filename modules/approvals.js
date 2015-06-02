@@ -3,7 +3,6 @@
 var http = require('http');
 var Promise = require('bluebird');
 var rest = require('unirest');
-var socket = require('./socket');
 
 var exports = module.exports = {};
 
@@ -57,7 +56,7 @@ function getProjectDetails(projectId) {
   });
 }
 
-function getProjectIds (swLat, swLong, neLat, neLong, type) {
+function getProjectIds (swLat, swLong, neLat, neLong, type, socket) {
   console.log("Querying DSD");
   return new Promise(function (resolve, reject) {
     rest.get('http://opendsd.sandiego.gov/api/approvalmapsearch/?SearchType=Ministerial&SouthWestLatitude='
@@ -69,7 +68,7 @@ function getProjectIds (swLat, swLong, neLat, neLong, type) {
 
         if ('ErrorMessage' in result.body){
           console.log("No entries found");
-          socket.broadcast('updateCustomer', []);
+          socket.emit('updateCustomer', []);
           resolve([]);
           return;
         }
@@ -130,9 +129,9 @@ function scaleScores(scores) {
   return result;
 }
 
-exports.getContractors = function(swLat, swLong, neLat, neLong, type) {
+exports.getContractors = function(swLat, swLong, neLat, neLong, type, socket) {
   return new Promise(function (resolve, reject) {
-    getProjectIds(swLat, swLong, neLat, neLong, type)
+    getProjectIds(swLat, swLong, neLat, neLong, type, socket)
     .then(function(projects) {
       var data = {};
       console.log('projects', projects);
@@ -143,7 +142,7 @@ exports.getContractors = function(swLat, swLong, neLat, neLong, type) {
           var ranked = sortByScore(dictToArr(data)).slice(0, 10);
           var scaled = scaleScores(ranked);
           console.log(scaled);
-          socket.broadcast('updateCustomer', scaled);
+          socket.emit('updateCustomer', scaled);
         });
       });
     resolve();

@@ -17,7 +17,8 @@ function Endpoint(endpoint) {
       data['swLng'],
       data['neLat'],
       data['neLng'],
-      data['type']
+      data['type'],
+      client
       );
   });
 }
