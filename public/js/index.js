@@ -11,6 +11,8 @@ $(document).ready(function() {
   }
 
   $('#search').on('click', function(evt) {
+	//Mixpanel
+    mixpanel.track("Search"); 
     var neLat = map.getBounds().getNorthEast().lat();
     var neLng = map.getBounds().getNorthEast().lng();
     var swLat = map.getBounds().getSouthWest().lat();
