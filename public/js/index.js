@@ -12,8 +12,15 @@ $(document).ready(function() {
 
   $('#search').on('click', function(evt) {
   //Mixpanel
-    mixpanel.track("Search"); 
-    var neLat = map.getBounds().getNorthEast().lat();
+    mixpanel.track("Search",{
+        "key":keyInput.value,
+        "NElat": map.getBounds().getNorthEast().lat(),
+        "NElng": map.getBounds().getNorthEast().lng(),
+        "SWlat": map.getBounds().getSouthWest().lat(),
+        "SWlng": map.getBounds().getSouthWest().lng()
+    });
+  
+  var neLat = map.getBounds().getNorthEast().lat();
     var neLng = map.getBounds().getNorthEast().lng();
     var swLat = map.getBounds().getSouthWest().lat();
     var swLng = map.getBounds().getSouthWest().lng();
