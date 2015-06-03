@@ -132,11 +132,11 @@ function scaleScores(scores) {
 
 exports.getContractors = function(swLat, swLong, neLat, neLong, type, socket) {
   return new Promise(function (resolve, reject) {
-    socket.emit('statusUpdate', 'Querying DSD');
+    socket.emit('statusUpdate', 'Querying DSD... (please wait)');
 
     getProjectIds(swLat, swLong, neLat, neLong, type, socket)
     .then(function(projects) {
-      socket.emit('statusUpdate', 'Filtering relevant projects');
+      socket.emit('statusUpdate', 'Filtering relevant projects... (please wait)');
 
       var data = {};
       projects.forEach(function(projectId, index) {

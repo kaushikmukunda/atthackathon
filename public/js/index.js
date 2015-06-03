@@ -47,11 +47,14 @@ $(document).ready(function() {
     "data": [],
     "searching": false,
     "paging": false,
+    "aaSorting": [[ 1, "desc" ]],
     "columns" : [
       {'title': "Firm Name"},
       {'title': "Score"}
     ]
   });
+
+//rTable=fnSort([[1,'desc']]);
 
   socket.on('updateCustomer', function(data) {
     var dataSet= [];
