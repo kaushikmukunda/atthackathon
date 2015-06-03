@@ -11,7 +11,7 @@ $(document).ready(function() {
   }
 
   $('#search').on('click', function(evt) {
-	//Mixpanel
+  //Mixpanel
     mixpanel.track("Search"); 
     var neLat = map.getBounds().getNorthEast().lat();
     var neLng = map.getBounds().getNorthEast().lng();
@@ -34,6 +34,7 @@ $(document).ready(function() {
   var map = mapInit();
   var socket = io();
   var keyInput = $('#key')[0];
+  var infoText = $('#info')[0];
 
   var rTable = $('#table').dataTable ({
     "data": [],
@@ -52,5 +53,16 @@ $(document).ready(function() {
     });
     rTable.fnClearTable();
     rTable.fnAddData(dataSet);
+  });
+
+  socket.on('statusUpdate', function(data) {
+    infoText.textContent = data;
+  });
+
+  socket.on('done', function(data) {
+    infoText.textContent = data;
+    setTimeout(function() {
+      infoText.textContent = '';
+    }, 3000);
   });
 });

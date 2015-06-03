@@ -9,6 +9,14 @@ body {
 }
 
 .title {
-  font-size:22px;
-  font-weight:bold;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+#info {
+  color: grey;
+  font-size: 18px;
+  padding: 5px;
+  font-weight: italic;
+  text-decoration: blink;
 }

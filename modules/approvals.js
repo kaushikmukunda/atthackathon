@@ -57,7 +57,6 @@ function getProjectDetails(projectId) {
 }
 
 function getProjectIds (swLat, swLong, neLat, neLong, type, socket) {
-  console.log("Querying DSD");
   return new Promise(function (resolve, reject) {
     rest.get('http://opendsd.sandiego.gov/api/approvalmapsearch/?SearchType=Ministerial&SouthWestLatitude='
     + swLat +'&SouthWestLongitude=' + swLong
@@ -67,9 +66,7 @@ function getProjectIds (swLat, swLong, neLat, neLong, type, socket) {
         var projects = [];
 
         if ('ErrorMessage' in result.body){
-          console.log("No entries found");
-          socket.emit('updateCustomer', []);
-          resolve([]);
+          reject("No matching entries found");
           return;
         }
 
@@ -86,14 +83,19 @@ function getProjectIds (swLat, swLong, neLat, neLong, type, socket) {
         });
         var s = getUnique(projects);
         console.log("Number of unique projects", s.length);
-        resolve(s);
+
+        if (s.length > 0) {
+          resolve(s);
+        }else {
+          reject("No matching projects");
+        }
+
     });
   });
-};
+}
 
 function mergeCustomers(base, add) {
   add.forEach(function(newFirm) {
-    console.log('newfirm', newFirm);
     var firmName = newFirm['firmName'];
     if (!base[firmName]) {
       base[firmName] = newFirm;
@@ -119,7 +121,6 @@ function scaleScores(scores) {
       max = score['score'];
     }
   });
-  console.log('max', max);
   scores.forEach(function(score) {
     var res = {};
     res['score'] = Math.floor(score['score']/max * 100);
@@ -131,21 +132,31 @@ function scaleScores(scores) {
 
 exports.getContractors = function(swLat, swLong, neLat, neLong, type, socket) {
   return new Promise(function (resolve, reject) {
+    socket.emit('statusUpdate', 'Querying DSD');
+
     getProjectIds(swLat, swLong, neLat, neLong, type, socket)
     .then(function(projects) {
+      socket.emit('statusUpdate', 'Filtering relevant projects');
+
       var data = {};
-      console.log('projects', projects);
-      projects.forEach(function(projectId) {
+      projects.forEach(function(projectId, index) {
         getProjectDetails(projectId)
         .then(function(details) {
           data = mergeCustomers(data, details);
           var ranked = sortByScore(dictToArr(data)).slice(0, 10);
           var scaled = scaleScores(ranked);
-          console.log(scaled);
           socket.emit('updateCustomer', scaled);
+
+          if(index === (projects.length-1)) {
+            socket.emit('done', 'Finished Search');
+          }
         });
       });
-    resolve();
+      resolve();
+    })
+    .catch(function(err) {
+      socket.emit('done', err);
+      reject(err);
     });
   });
 };

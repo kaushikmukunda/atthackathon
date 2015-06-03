@@ -19,7 +19,8 @@ function Endpoint(endpoint) {
       data['neLng'],
       data['type'],
       client
-      );
+      )
+    .catch(function(err) {});
   });
 }
 
