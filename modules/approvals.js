@@ -148,7 +148,12 @@ exports.getContractors = function(swLat, swLong, neLat, neLong, type, socket) {
           socket.emit('updateCustomer', scaled);
 
           if(index === (projects.length-1)) {
-            socket.emit('done', 'Finished Search');
+	    //temporary txt for done search. Disappears after few sec
+            //socket.emit('done', 'Finished Search');
+
+            //permanent txt for complete search
+	    socket.emit('statusUpdate', 'Search Complete');
+
           }
         });
       });
